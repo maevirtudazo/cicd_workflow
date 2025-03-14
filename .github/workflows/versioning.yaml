@@ -1,0 +1,34 @@
+name: Maven App Versioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version type to promote (major/minor/patch)'
+        required: true
+        default: 'patch'
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Choose version up for maven
+        run: |
+          case "${{ github.event.inputs.version }}" in
+            major) mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.nextMajorVersion}.0.0' versions:commit ;;
+            minor) mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0' versions:commit ;;
+            patch) mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}' versions:commit ;;
+          esac
+      - name: Extract Version from Maven
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
+        run: |
+          echo "docker build -t mycustom.registry/myapp:${{ env.VERSION }} . "
+          echo " docker push mycustom.registry/myapp:${{ env.VERSION }}"
+         

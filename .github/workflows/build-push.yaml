@@ -13,7 +13,7 @@ jobs:
           echo "Login to your custom docker registry..."
       - name: Build and tag docker image
         run: |
-          echo "docker build -t mycustom.registry:latest . "
+          echo "docker build -t mycustom.registry/myapp:latest . "
       - name: Push docker image to mycustom.registry
         run: |
-          echo "docker push mycustom.registry:latest "
+          echo "docker push mycustom.registry/myapp:latest "
