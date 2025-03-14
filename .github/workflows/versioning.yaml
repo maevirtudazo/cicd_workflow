@@ -1,17 +1,8 @@
 name: Maven App Versioning
 
 on:
-  workflow_run:
-    workflows: ["Build and Push Image to mycustom.registry"]
-    types:
-      - completed
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version type to promote (major/minor/patch)'
-        required: true
-        default: 'patch'
-        type: string
       version_type:
         description: 'Version Type'
         required: true
@@ -20,6 +11,7 @@ on:
           - major
           - minor
           - patch
+          - none
 jobs:
   promote:
     runs-on: ubuntu-latest
@@ -27,6 +19,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Handle Version Type (Only for workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ "${{ github.event.inputs.version_type }}" = "none" ]; then
+            echo "Skipping version bump and Docker image promotion."
+            exit 0
+          fi
 
       - name: Choose version up for maven
         run: |
