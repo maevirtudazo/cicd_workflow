@@ -1,0 +1,19 @@
+name: Build and Push Image to mycustom.registry
+on: 
+  push:
+    branches: 
+      - main
+jobs: 
+  build-image:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3 
+      - name: Log in to Docker Registry
+        run: | 
+          echo "Login to your custom docker registry..."
+      - name: Build and tag docker image
+        run: |
+          echo "docker build -t mycustom.registry:latest . "
+      - name: Push docker image to mycustom.registry
+        run: |
+          echo "docker push mycustom.registry:latest "
