@@ -1,6 +1,10 @@
 name: Maven App Versioning
 
 on:
+  workflow_run:
+    workflows: ["Build and Push Image to mycustom.registry"]
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       version:
