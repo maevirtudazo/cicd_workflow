@@ -56,3 +56,8 @@ jobs:
           git add pom.xml
           git commit -m "chore: bump version to ${{ env.VERSION }}"
           git push
+          
+      - name: Tag and Push Version
+        run: |
+          git tag "v${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
