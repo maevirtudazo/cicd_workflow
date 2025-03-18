@@ -1,4 +1,4 @@
-name: Build and Push Image to mycustom.registry
+name: Dev Build and Push Image to mycustom.registry
 on: 
   push:
     branches: 
