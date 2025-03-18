@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.mea</groupId>
 	<artifactId>mvn.versioning</artifactId>
-	<version>3.0.1</version>
+	<version>3.0.2</version>
 	<name>mvn.versioning</name>
 	<description>Demo project for Spring Boot -- semantic versioning </description>
 	<url/>
