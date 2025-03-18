@@ -1,4 +1,4 @@
-name: Maven App Versioning
+name: Main Maven App Versioning
 
 on:
   workflow_dispatch:
@@ -28,6 +28,12 @@ jobs:
             exit 0
           fi
 
+      - name: Ensure Workflow Runs Only on 'main' Branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "This workflow only runs on the 'main' branch."
+          exit 1  # Exits the workflow if it's not on the 'main' branch
+
       - name: Choose version up for maven
         run: |
           case "${{ github.event.inputs.version_type }}" in
@@ -35,15 +41,11 @@ jobs:
             minor) mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0' versions:commit ;;
             patch) mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}' versions:commit ;;
           esac
+
       - name: Extract Version from Maven
         run: |
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Build and Push Docker Image
-        run: |
-          echo "docker build -t mycustom.registry/myapp:${{ env.VERSION }} . "
-          echo " docker push mycustom.registry/myapp:${{ env.VERSION }}"
 
       - name: Set up Git Authentication
         run: |

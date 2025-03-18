@@ -2,7 +2,7 @@ name: Build and Push Image to mycustom.registry
 on: 
   push:
     branches: 
-      - main
+      - prod
 jobs: 
   build-image:
     runs-on: ubuntu-latest
@@ -11,9 +11,16 @@ jobs:
       - name: Log in to Docker Registry
         run: | 
           echo "Login to your custom docker registry..."
+
+      - name: Extract Version from Maven
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Build and tag docker image
         run: |
-          echo "docker build -t mycustom.registry/myapp:latest . "
+          echo "docker build -t mycustom.registry/myapp/prod:${{ env.VERSION }} . "
+
       - name: Push docker image to mycustom.registry
         run: |
-          echo "docker push mycustom.registry/myapp:latest "
+          echo "docker push mycustom.registry/myapp/prod:${{ env.VERSION }} "
